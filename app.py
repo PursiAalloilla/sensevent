@@ -44,6 +44,24 @@ def generate_frames(dat_file_path):
 @app.route('/')
 def index():
     """Homepage listing all available tracking routes"""
+    if not DATA_FILES:
+        return """
+        <html>
+        <head><title>Sensevent - Drone Tracking</title></head>
+        <body style="font-family: Arial; padding: 40px; max-width: 800px; margin: 0 auto;">
+            <h1>🚁 Sensevent Drone Tracking Server</h1>
+            <p>Server is running, but no data files found.</p>
+            <p>Please upload .dat files to the following directories:</p>
+            <ul>
+                <li>DroneHovering/</li>
+                <li>DroneMoving/</li>
+                <li>fan/</li>
+            </ul>
+            <p><strong>Status:</strong> ✅ Server is operational</p>
+            <p><strong>API:</strong> <a href="/api/sources">/api/sources</a></p>
+        </body>
+        </html>
+        """, 200
     return render_template('index.html', data_files=DATA_FILES)
 
 
@@ -79,6 +97,16 @@ def list_sources():
             'stream_url': f'/video/{route_name}'
         })
     return jsonify(sources)
+
+
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    return jsonify({
+        'status': 'healthy',
+        'data_files_count': len(DATA_FILES),
+        'data_files': list(DATA_FILES.keys())
+    })
 
 
 if __name__ == '__main__':
