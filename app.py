@@ -85,5 +85,8 @@ if __name__ == '__main__':
     print("Available tracking routes:")
     for route_name, file_path in DATA_FILES.items():
         print(f"  - /view/{route_name}")
-    print("\nStarting Flask server on http://localhost:5000")
-    app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
+    
+    # Get port from environment variable (for Render) or default to 5000
+    port = int(os.environ.get('PORT', 5000))
+    print(f"\nStarting Flask server on http://0.0.0.0:{port}")
+    app.run(debug=False, host='0.0.0.0', port=port, threaded=True)
