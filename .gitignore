@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build/test caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node (if present)
+node_modules/
+
+# Keep data for render server (tracked via Git LFS)
+# Do NOT ignore DroneHovering/, DroneMoving/, fan/
+
+.dat
+.raw

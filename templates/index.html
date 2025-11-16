@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Tracking Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .category {
+            margin-bottom: 40px;
+        }
+        
+        .category-title {
+            color: #4A148C;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4A148C;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .video-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            border-color: #4A148C;
+        }
+        
+        .video-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .video-card a {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .video-card a:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: scale(1.05);
+        }
+        
+        .api-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .api-info h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        
+        .api-info code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #d32f2f;
+        }
+        
+        .no-files {
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Drone Tracking Dashboard</h1>
+        <p class="subtitle">Real-time event camera tracking and prediction system</p>
+        
+        {% if data_files %}
+            {% set drone_hovering = [] %}
+            {% set drone_moving = [] %}
+            {% set fan_videos = [] %}
+            
+            {% for route, filepath in data_files.items() %}
+                {% if route.startswith('dronehovering/') %}
+                    {% set _ = drone_hovering.append(route) %}
+                {% elif route.startswith('dronemoving/') %}
+                    {% set _ = drone_moving.append(route) %}
+                {% elif route.startswith('fan/') %}
+                    {% set _ = fan_videos.append(route) %}
+                {% endif %}
+            {% endfor %}
+            
+            {% if drone_hovering %}
+            <div class="category">
+                <h2 class="category-title">Drone Hovering</h2>
+                <div class="video-grid">
+                    {% for route in drone_hovering %}
+                    <div class="video-card">
+                        <h3>{{ route.split('/')[-1].replace('-', ' ').title() }}</h3>
+                        <a href="/view/{{ route }}">View Tracking</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if drone_moving %}
+            <div class="category">
+                <h2 class="category-title">Drone Moving</h2>
+                <div class="video-grid">
+                    {% for route in drone_moving %}
+                    <div class="video-card">
+                        <h3>{{ route.split('/')[-1].replace('-', ' ').title() }}</h3>
+                        <a href="/view/{{ route }}">View Tracking</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if fan_videos %}
+            <div class="category">
+                <h2 class="category-title">Fan Test Videos</h2>
+                <div class="video-grid">
+                    {% for route in fan_videos %}
+                    <div class="video-card">
+                        <h3>{{ route.split('/')[-1].replace('-', ' ').title() }}</h3>
+                        <a href="/view/{{ route }}">View Tracking</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="no-files">
+                No .dat files found in the workspace.
+            </div>
+        {% endif %}
+        
+        <div class="api-info">
+            <h3>API Information</h3>
+            <p>Get list of all available sources: <code>GET /api/sources</code></p>
+            <p>Access video stream directly: <code>GET /video/&lt;route_name&gt;</code></p>
+        </div>
+    </div>
+</body>
+</html>
